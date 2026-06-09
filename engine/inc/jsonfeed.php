@@ -10,6 +10,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_settings'])) {
     
     // Собираем настройки из формы
     $jsonfeedConfig = [
+        // НОВЫЕ ПОЛЯ: название и описание главной ленты
+        'feed_title_main' => trim($_POST['feed_title_main'] ?? ($config['home_title'] ?? 'Новости сайта')),
+        'feed_description_main' => trim($_POST['feed_description_main'] ?? ('Новости и публикации с сайта ' . ($config['home_title'] ?? ''))),
+        
         'items_per_page' => intval($_POST['items_per_page'] ?? 20),
         'max_items' => intval($_POST['max_items'] ?? 100),
         'cache_time' => intval($_POST['cache_time'] ?? 3600),
@@ -20,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_settings'])) {
         'enable_images' => isset($_POST['enable_images']) ? true : false
     ];
     
-    // Типы контента (сохраняем как JSON)
+    // Типы контента (сохраняем как массив)
     $content_types = [];
     if (isset($_POST['content_type_name']) && is_array($_POST['content_type_name'])) {
         foreach ($_POST['content_type_name'] as $idx => $name) {
@@ -31,13 +35,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_settings'])) {
             }
         }
     }
+    $jsonfeedConfig['content_types'] = $content_types;
     
     // Настройки для разных типов лент
     $feeds = [];
     if (isset($_POST['feed_type']) && is_array($_POST['feed_type'])) {
         foreach ($_POST['feed_type'] as $idx => $type) {
             if (!empty($type)) {
-                $feeds[$type] = [
+                $feeds[trim($type)] = [
                     'title' => trim($_POST['feed_title'][$idx] ?? ''),
                     'description' => trim($_POST['feed_description'][$idx] ?? ''),
                     'limit' => intval($_POST['feed_limit'][$idx] ?? 20)
@@ -45,6 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_settings'])) {
             }
         }
     }
+    $jsonfeedConfig['feeds'] = $feeds;
     
     // Формируем содержимое конфиг-файла
     $configContent = "<?php\n";
@@ -59,27 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_settings'])) {
     $configContent .= "if (!defined('DATALIFEENGINE') && !defined('JSONFEED_INIT')) {\n";
     $configContent .= "    die('Hacking attempt!');\n";
     $configContent .= "}\n\n";
-    $configContent .= "\$jsonfeed_config = [\n";
-    $configContent .= "    // Основные настройки\n";
-    $configContent .= "    'items_per_page' => " . $jsonfeedConfig['items_per_page'] . ",\n";
-    $configContent .= "    'max_items' => " . $jsonfeedConfig['max_items'] . ",\n";
-    $configContent .= "    'cache_time' => " . $jsonfeedConfig['cache_time'] . ",\n";
-    $configContent .= "    'enable_cache' => " . ($jsonfeedConfig['enable_cache'] ? 'true' : 'false') . ",\n";
-    $configContent .= "    \n";
-    $configContent .= "    // Качество изображений\n";
-    $configContent .= "    'image_quality' => " . $jsonfeedConfig['image_quality'] . ",\n";
-    $configContent .= "    \n";
-    $configContent .= "    // Включение/выключение элементов\n";
-    $configContent .= "    'enable_categories' => " . ($jsonfeedConfig['enable_categories'] ? 'true' : 'false') . ",\n";
-    $configContent .= "    'enable_tags' => " . ($jsonfeedConfig['enable_tags'] ? 'true' : 'false') . ",\n";
-    $configContent .= "    'enable_images' => " . ($jsonfeedConfig['enable_images'] ? 'true' : 'false') . ",\n";
-    $configContent .= "    \n";
-    $configContent .= "    // Типы контента и соответствующие категории\n";
-    $configContent .= "    'content_types' => " . var_export($content_types, true) . ",\n";
-    $configContent .= "    \n";
-    $configContent .= "    // Настройки для разных типов лент\n";
-    $configContent .= "    'feeds' => " . var_export($feeds, true) . "\n";
-    $configContent .= "];\n";
+    $configContent .= "\$jsonfeed_config = " . var_export($jsonfeedConfig, true) . ";\n";
     
     // Путь к файлу конфига
     $configFile = $_SERVER['DOCUMENT_ROOT'] . '/plugins/tcse/jsonfeed/config.php';
@@ -107,6 +93,8 @@ if (file_exists($configFile)) {
 // Устанавливаем значения по умолчанию, если конфиг не загрузился
 if (!isset($jsonfeed_config)) {
     $jsonfeed_config = [
+        'feed_title_main' => $config['home_title'] ?? 'Новости сайта',
+        'feed_description_main' => 'Новости и публикации с сайта ' . ($config['home_title'] ?? ''),
         'items_per_page' => 20,
         'max_items' => 100,
         'cache_time' => 3600,
@@ -115,30 +103,8 @@ if (!isset($jsonfeed_config)) {
         'enable_categories' => true,
         'enable_tags' => true,
         'enable_images' => true,
-        'content_types' => [
-            'blog' => [1, 19, 20],
-            'portfolio' => [2],
-            'works' => [21, 31, 34, 37],
-            'faq' => [40],
-            'tmh' => [41]
-        ],
-        'feeds' => [
-            'main' => [
-                'title' => 'Новости сайта',
-                'description' => 'Новости и публикации сайта',
-                'limit' => 20
-            ],
-            'blog' => [
-                'title' => 'Блог - статьи и новости',
-                'description' => 'Статьи из блога сайта',
-                'limit' => 30
-            ],
-            'portfolio' => [
-                'title' => 'Портфолио - наши работы',
-                'description' => 'Проекты из портфолио',
-                'limit' => 20
-            ]
-        ]
+        'content_types' => [],
+        'feeds' => []
     ];
 }
 

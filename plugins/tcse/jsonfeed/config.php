@@ -12,46 +12,41 @@ if (!defined('DATALIFEENGINE') && !defined('JSONFEED_INIT')) {
     die('Hacking attempt!');
 }
 
-$jsonfeed_config = [
-    // Основные настройки
-    'items_per_page' => 20,
-    'max_items' => 100,
-    'cache_time' => 3600,
-    'enable_cache' => false,
-    
-    // Качество изображений
-    'image_quality' => 80,
-    
-    // Включение/выключение элементов
-    'enable_categories' => true,
-    'enable_tags' => true,
-    'enable_images' => false,
-    
-    // Типы контента и соответствующие категории
-    'content_types' => array (
-  'blog' => 
+$jsonfeed_config = array (
+  'feed_title_main' => 'PWHT – после сварочная термическая обработка',
+  'feed_description_main' => 'Новости и публикации с сайта PWHT – после сварочная термическая обработка',
+  'items_per_page' => 20,
+  'max_items' => 100,
+  'cache_time' => 3600,
+  'enable_cache' => false,
+  'image_quality' => 80,
+  'enable_categories' => true,
+  'enable_tags' => true,
+  'enable_images' => false,
+  'content_types' => 
   array (
-    0 => 2,
+    'blog' => 
+    array (
+      0 => 2,
+    ),
+    'techlib' => 
+    array (
+      0 => 3,
+    ),
   ),
-  'techlib' => 
+  'feeds' => 
   array (
-    0 => 3,
+    'blog' => 
+    array (
+      'title' => 'Блог - статьи и новости',
+      'description' => 'Статьи из блога ПромИндуктора',
+      'limit' => 30,
+    ),
+    'techlib' => 
+    array (
+      'title' => 'Техническая библиотека',
+      'description' => 'Документация по продукции ПромТВЧ',
+      'limit' => 20,
+    ),
   ),
-),
-    
-    // Настройки для разных типов лент
-    'feeds' => array (
-  'blog' => 
-  array (
-    'title' => 'Блог - статьи и новости',
-    'description' => 'Статьи из блога ПромИндуктора',
-    'limit' => 30,
-  ),
-  'techlib' => 
-  array (
-    'title' => 'Техническая библиотека',
-    'description' => 'Документация по продукции ПромТВЧ',
-    'limit' => 20,
-  ),
-)
-];
+);

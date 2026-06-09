@@ -92,77 +92,102 @@ if (isset($error_message)) {
         <input type="hidden" name="save_settings" value="1">
         
         <!-- ========== ОСНОВНЫЕ НАСТРОЙКИ ========== -->
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <i class="fa fa-sliders"></i> Основные настройки JSON Feed
-            </div>
-            <div class="panel-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label>📄 Количество записей по умолчанию</label>
-                            <input type="number" class="form-control" name="items_per_page" 
-                                   value="<?php echo $jsonfeed_config['items_per_page']; ?>" min="1" max="50">
-                            <span class="help-block">Сколько записей показывать в ленте по умолчанию (1-50)</span>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label>📊 Максимальное количество записей</label>
-                            <input type="number" class="form-control" name="max_items" 
-                                   value="<?php echo $jsonfeed_config['max_items']; ?>" min="10" max="500">
-                            <span class="help-block">Максимальное количество записей через параметр &limit= (10-500)</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label>⏱ Время кэширования (секунд)</label>
-                            <input type="number" class="form-control" name="cache_time" 
-                                   value="<?php echo $jsonfeed_config['cache_time']; ?>" min="0" max="86400">
-                            <span class="help-block">0 - кэширование отключено. Рекомендуется 3600 (1 час)</span>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label>🖼 Качество изображений (%)</label>
-                            <input type="number" class="form-control" name="image_quality" 
-                                   value="<?php echo $jsonfeed_config['image_quality']; ?>" min="30" max="100">
-                            <span class="help-block">Качество JPEG-изображений в ленте (30-100)</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" name="enable_cache" value="1" <?php echo $jsonfeed_config['enable_cache'] ? 'checked' : ''; ?>>
-                                💾 Включить кэширование
-                            </label>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" name="enable_categories" value="1" <?php echo $jsonfeed_config['enable_categories'] ? 'checked' : ''; ?>>
-                                📂 Показывать категории
-                            </label>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" name="enable_tags" value="1" <?php echo $jsonfeed_config['enable_tags'] ? 'checked' : ''; ?>>
-                                🏷 Показывать теги
-                            </label>
-                        </div>
-                    </div>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <i class="fa fa-sliders"></i> Основные настройки JSON Feed
+    </div>
+    <div class="panel-body">
+        
+        <!-- НОВЫЕ ПОЛЯ: Название и описание ленты -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label>📌 Название ленты (feed title)</label>
+                    <input type="text" class="form-control" name="feed_title_main" 
+                           value="<?php echo isset($jsonfeed_config['feed_title_main']) ? htmlspecialchars($jsonfeed_config['feed_title_main']) : ($config['home_title'] ?? 'Новости сайта'); ?>">
+                    <span class="help-block">Заголовок, который будет отображаться в JSON Feed. По умолчанию: название сайта</span>
                 </div>
             </div>
         </div>
+        
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label>📝 Описание ленты (feed description)</label>
+                    <textarea class="form-control" name="feed_description_main" rows="2"><?php echo isset($jsonfeed_config['feed_description_main']) ? htmlspecialchars($jsonfeed_config['feed_description_main']) : ('Новости и публикации с сайта ' . ($config['home_title'] ?? '')); ?></textarea>
+                    <span class="help-block">Описание ленты. По умолчанию: "Новости и публикации с сайта НАЗВАНИЕ_САЙТА"</span>
+                </div>
+            </div>
+        </div>
+        
+        <hr>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>📄 Количество записей по умолчанию</label>
+                    <input type="number" class="form-control" name="items_per_page" 
+                           value="<?php echo $jsonfeed_config['items_per_page']; ?>" min="1" max="50">
+                    <span class="help-block">Сколько записей показывать в ленте по умолчанию (1-50)</span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>📊 Максимальное количество записей</label>
+                    <input type="number" class="form-control" name="max_items" 
+                           value="<?php echo $jsonfeed_config['max_items']; ?>" min="10" max="500">
+                    <span class="help-block">Максимальное количество записей через параметр &limit= (10-500)</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>⏱ Время кэширования (секунд)</label>
+                    <input type="number" class="form-control" name="cache_time" 
+                           value="<?php echo $jsonfeed_config['cache_time']; ?>" min="0" max="86400">
+                    <span class="help-block">0 - кэширование отключено. Рекомендуется 3600 (1 час)</span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>🖼 Качество изображений (%)</label>
+                    <input type="number" class="form-control" name="image_quality" 
+                           value="<?php echo $jsonfeed_config['image_quality']; ?>" min="30" max="100">
+                    <span class="help-block">Качество JPEG-изображений в ленте (30-100)</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-4">
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" name="enable_cache" value="1" <?php echo $jsonfeed_config['enable_cache'] ? 'checked' : ''; ?>>
+                        💾 Включить кэширование
+                    </label>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" name="enable_categories" value="1" <?php echo $jsonfeed_config['enable_categories'] ? 'checked' : ''; ?>>
+                        📂 Показывать категории
+                    </label>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" name="enable_tags" value="1" <?php echo $jsonfeed_config['enable_tags'] ? 'checked' : ''; ?>>
+                        🏷 Показывать теги
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
         
         <!-- ========== ТИПЫ КОНТЕНТА ========== -->
         <div class="panel panel-default">

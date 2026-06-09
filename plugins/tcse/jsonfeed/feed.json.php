@@ -69,7 +69,7 @@ if ($categoryFilter > 0) {
 // Сортировка
 $orderBy = ($order === 'date_asc') ? "p.date ASC" : "p.date DESC";
 
-// Формируем SQL запрос
+// Формируем SQL запрос (без category2 и category3)
 $sql = "SELECT 
             p.id,
             p.title,
@@ -117,15 +117,22 @@ while ($row = $db->get_array($result)) {
 // Базовый URL
 $baseUrl = $config['http_home_url'] ?? ((isSSL() ? 'https://' : 'http://') . $_SERVER['HTTP_HOST']);
 
-// Определение названия ленты
-$feedTitle = $config['home_title'] ?? 'Новости сайта';
-$feedDescription = 'Новости и публикации с сайта ' . ($config['home_title'] ?? '');
+// Определение названия ленты ИЗ КОНФИГА
+$feedTitle = $jsonfeed_config['feed_title_main'] ?? ($config['home_title'] ?? 'Новости сайта');
+$feedDescription = $jsonfeed_config['feed_description_main'] ?? ('Новости и публикации с сайта ' . ($config['home_title'] ?? ''));
 
+// Если указан тип ленты и есть настройки для него - переопределяем
+if ($typeFilter !== 'main' && isset($jsonfeed_config['feeds'][$typeFilter])) {
+    $feedConfig = $jsonfeed_config['feeds'][$typeFilter];
+    $feedTitle = $feedConfig['title'] ?? $feedTitle;
+    $feedDescription = $feedConfig['description'] ?? $feedDescription;
+}
+
+// Если указана категория и есть посты - можно уточнить название
 if ($categoryFilter > 0 && !empty($posts)) {
     $categoryName = getCategoryName($categoryFilter);
     if ($categoryName) {
-        $feedTitle = $categoryName . ' - ' . ($config['home_title'] ?? '');
-        $feedDescription = 'Публикации из раздела "' . $categoryName . '" на сайте ' . ($config['home_title'] ?? '');
+        $feedTitle = $categoryName . ' - ' . $feedTitle;
     }
 }
 
@@ -135,7 +142,7 @@ $feed = [
     'title' => $feedTitle,
     'home_page_url' => $baseUrl,
     'feed_url' => $baseUrl . '/plugins/tcse/jsonfeed/feed.json.php' 
-        . ($categoryFilter ? '?category=' . $categoryFilter : ''),
+        . ($categoryFilter ? '?category=' . $categoryFilter : ($typeFilter !== 'main' ? '?type=' . $typeFilter : '')),
     'description' => $feedDescription,
     'user_comment' => 'JSON Feed формат для AI-агентов и RSS-ридеров. Спецификация: https://jsonfeed.org/version/1.1',
     'favicon' => $baseUrl . '/favicon.ico',
