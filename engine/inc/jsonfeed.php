@@ -14,6 +14,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_settings'])) {
         'feed_title_main' => trim($_POST['feed_title_main'] ?? ($config['home_title'] ?? 'Новости сайта')),
         'feed_description_main' => trim($_POST['feed_description_main'] ?? ('Новости и публикации с сайта ' . ($config['home_title'] ?? ''))),
         
+        // НОВЫЕ ПОЛЯ: иконки
+        'feed_icon_url' => trim($_POST['feed_icon_url'] ?? ''),
+        'feed_favicon_url' => trim($_POST['feed_favicon_url'] ?? ''),
+        
+        // Основные настройки
         'items_per_page' => intval($_POST['items_per_page'] ?? 20),
         'max_items' => intval($_POST['max_items'] ?? 100),
         'cache_time' => intval($_POST['cache_time'] ?? 3600),
@@ -95,6 +100,8 @@ if (!isset($jsonfeed_config)) {
     $jsonfeed_config = [
         'feed_title_main' => $config['home_title'] ?? 'Новости сайта',
         'feed_description_main' => 'Новости и публикации с сайта ' . ($config['home_title'] ?? ''),
+        'feed_icon_url' => '',
+        'feed_favicon_url' => '',
         'items_per_page' => 20,
         'max_items' => 100,
         'cache_time' => 3600,

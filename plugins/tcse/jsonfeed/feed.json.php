@@ -157,7 +157,7 @@ $feed = [
     'description' => $feedDescription,
     'user_comment' => 'JSON Feed формат для AI-агентов и RSS-ридеров. Спецификация: https://jsonfeed.org/version/1.1',
     'favicon' => $baseUrl . '/favicon.ico',
-    'icon' => $baseUrl . '/templates/' . ($config['skin'] ?? 'default') . '/images/logo.png',
+    'icon' => $baseUrl . '/uploads/jsonfeed-logo.png',
     'autors' => [
         [
             'name' => $config['home_title'] ?? 'Администрация',

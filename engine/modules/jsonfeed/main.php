@@ -85,13 +85,17 @@ if (isset($error_message)) {
     .remove-row {
         margin-top: 20px;
     }
+    .my-3 {
+        margin-top: 2.5rem;
+        margin-bottom: 2.5rem;
+    }
 </style>
 
 <div class="jsonfeed-settings">
     <form action="" method="post" class="systemsettings">
         <input type="hidden" name="save_settings" value="1">
         
-        <!-- ========== ОСНОВНЫЕ НАСТРОЙКИ ========== -->
+<!-- ========== ОСНОВНЫЕ НАСТРОЙКИ ========== -->
 <div class="panel panel-default">
     <div class="panel-heading">
         <i class="fa fa-sliders"></i> Основные настройки JSON Feed
@@ -119,8 +123,31 @@ if (isset($error_message)) {
                 </div>
             </div>
         </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label>🖼 URL иконки ленты (icon)</label>
+                    <input type="text" class="form-control" name="feed_icon_url" 
+                           value="<?php echo isset($jsonfeed_config['feed_icon_url']) ? htmlspecialchars($jsonfeed_config['feed_icon_url']) : ''; ?>"
+                           placeholder="/uploads/jsonfeed-logo.png">
+                    <span class="help-block">Рекомендуемый размер: 512×512 px (квадратное изображение). Оставьте пустым для использования логотипа сайта.</span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label>⭐ URL favicon</label>
+                    <input type="text" class="form-control" name="feed_favicon_url" 
+                           value="<?php echo isset($jsonfeed_config['feed_favicon_url']) ? htmlspecialchars($jsonfeed_config['feed_favicon_url']) : ''; ?>"
+                           placeholder="/favicon.ico">
+                    <span class="help-block">Рекомендуемый размер: 32×32 px. Обычно используется /favicon.ico</span>
+                </div>
+            </div>
+        </div>
         
-        <hr>
+        <hr class="my-3">
         
         <div class="row">
             <div class="col-md-6">
