@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dleplugin>
+	<name>jsonfeed</name>
+	<description>Добавляет поддержку json feed по аналогии в RSS feed</description>
+	<icon></icon>
+	<version>0.1</version>
+	<dleversion></dleversion>
+	<versioncompare>greater</versioncompare>
+	<upgradeurl></upgradeurl>
+	<filedelete>0</filedelete>
+	<needplugin></needplugin>
+	<mnotice>1</mnotice>
+	<mysqlinstall><![CDATA[INSERT IGNORE INTO `{prefix}_admin_sections` 
+(`name`, `title`, `descr`, `icon`, `allow_groups`) 
+VALUES (
+    'jsonfeed', 
+    'jsonfeed', 
+    'Добавляет поддержку json feed по аналогии c RSS feed', 
+    'jsonfeed.png', 
+    '1'
+);]]></mysqlinstall>
+	<mysqlupgrade><![CDATA[]]></mysqlupgrade>
+	<mysqlenable><![CDATA[]]></mysqlenable>
+	<mysqldisable><![CDATA[]]></mysqldisable>
+	<mysqldelete><![CDATA[]]></mysqldelete>
+	<phpinstall><![CDATA[]]></phpinstall>
+	<phpupgrade><![CDATA[]]></phpupgrade>
+	<phpenable><![CDATA[]]></phpenable>
+	<phpdisable><![CDATA[]]></phpdisable>
+	<phpdelete><![CDATA[]]></phpdelete>
+	<notice><![CDATA[JSON Feed формат для AI-агентов и RSS-ридеров. Спецификация: https://jsonfeed.org/version/1.1]]></notice>
+</dleplugin>
