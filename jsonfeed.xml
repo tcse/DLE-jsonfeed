@@ -2,7 +2,7 @@
 <dleplugin>
 	<name>jsonfeed</name>
 	<description>Добавляет поддержку json feed по аналогии в RSS feed</description>
-	<icon></icon>
+	<icon>plugins/tcse/jsonfeed/jsonfeed-icon.png</icon>
 	<version>0.1</version>
 	<dleversion></dleversion>
 	<versioncompare>greater</versioncompare>
@@ -28,5 +28,9 @@ VALUES (
 	<phpenable><![CDATA[]]></phpenable>
 	<phpdisable><![CDATA[]]></phpdisable>
 	<phpdelete><![CDATA[]]></phpdelete>
-	<notice><![CDATA[JSON Feed формат для AI-агентов и RSS-ридеров. Спецификация: https://jsonfeed.org/version/1.1]]></notice>
+	<notice><![CDATA[JSON Feed формат для AI-агентов и RSS-ридеров. Спецификация: https://jsonfeed.org/version/1.1
+
+Репозиторий https://github.com/tcse/DLE-jsonfeed
+
+Перейти в админку плагина <a href="/admin.php?mod=jsonfeed">mod=jsonfeed</a> /admin.php?mod=jsonfeed]]></notice>
 </dleplugin>
