@@ -396,71 +396,143 @@ if (isset($error_message)) {
             </div>
         </div>
         
-        <!-- ========== ПРИМЕРЫ ИСПОЛЬЗОВАНИЯ ========== -->
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <i class="fa fa-code"></i> Примеры URL для использования
-            </div>
-            <div class="panel-body">
-                <h4>📡 Основные ссылки JSON Feed</h4>
-                <table class="table table-bordered table-striped">
-                    <thead>
-                        <tr><th style="width: 40%;">Описание</th><th style="width: 60%;">URL</th></tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>📄 Основная лента (все записи)</td><td><code>/plugins/tcse/jsonfeed/feed.json.php</code></td></tr>
-                        <tr><td>📄 Основная лента (через ЧПУ)</td><td><code>/jsonfeed.json</code></td></tr>
-                        <?php if (!empty($feeds)): foreach ($feeds as $feed_type => $feed_data): ?>
-                        <tr>
-                            <td>📄 Лента "<?php echo htmlspecialchars($feed_type); ?>"</td>
-                            <td><code>/jsonfeed-<?php echo htmlspecialchars($feed_type); ?>.json</code></td>
-                        </tr>
-                        <?php endforeach; endif; ?>
-                    </tbody>
-                </table>
-                
-                <h4>🔧 Параметры фильтрации</h4>
-                <table class="table table-bordered table-striped">
-                    <thead>
-                        <tr><th style="width: 40%;">Параметр</th><th style="width: 60%;">Пример</th></tr>
-                    </thead>
-                    <tbody>
-                        <tr><td><code>&limit=N</code> — количество записей</td><td><code>/jsonfeed.json?limit=30</code></td></tr>
-                        <tr><td><code>&category=ID</code> — фильтр по категории</td><td><code>/jsonfeed.json?category=20</code></td></tr>
-                        <tr><td><code>&type=НАЗВАНИЕ</code> — фильтр по типу контента</td>
-                            <td><?php if (!empty($content_types)): foreach ($content_types as $type_name => $cats): ?>
-                                <code>/jsonfeed.json?type=<?php echo htmlspecialchars($type_name); ?></code><br>
-                            <?php endforeach; else: ?>—<?php endif; ?></td>
-                        </tr>
-                        <tr><td><code>&order=date_asc|date_desc|price_asc|price_desc</code> — сортировка</td>
-                            <td><code>/jsonfeed.json?order=date_asc</code><br>
-                            <code>/jsonfeed.json?order=price_desc&limit=10</code> (только для товаров)</td>
-                        </tr>
-                    </tbody>
-                </table>
-                
-                <h4>🌐 Примеры для AI-агентов</h4>
-                <pre>
+<!-- ========== ПРИМЕРЫ ИСПОЛЬЗОВАНИЯ ========== -->
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <i class="fa fa-code"></i> Примеры URL для использования
+    </div>
+    <div class="panel-body">
+        
+        <?php
+        // Динамический адрес сайта для примеров
+        $siteUrl = $config['http_home_url'] ?? ((isSSL() ? 'https://' : 'http://') . $_SERVER['HTTP_HOST']);
+        $siteUrl = rtrim($siteUrl, '/');
+        ?>
+        
+        <h4>📡 Основные ссылки JSON Feed</h4>
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr><th style="width: 40%;">Описание</th><th style="width: 60%;">URL</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>📄 Основная лента (все записи)</td><td><code><?php echo $siteUrl; ?>/plugins/tcse/jsonfeed/feed.json.php</code></td></tr>
+                <tr><td>📄 Основная лента (через ЧПУ)</td><td><code><?php echo $siteUrl; ?>/jsonfeed.json</code></td></tr>
+                <?php if (!empty($jsonfeed_config['feeds'])): foreach ($jsonfeed_config['feeds'] as $feed_type => $feed_data): ?>
+                <tr>
+                    <td>📄 Лента "<?php echo htmlspecialchars($feed_type); ?>"</td>
+                    <td><code><?php echo $siteUrl; ?>/jsonfeed-<?php echo htmlspecialchars($feed_type); ?>.json</code></td>
+                </tr>
+                <?php endforeach; endif; ?>
+            </tbody>
+        </table>
+        
+        <h4>🔧 Параметры фильтрации</h4>
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr><th style="width: 40%;">Параметр</th><th style="width: 60%;">Пример</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>&limit=N</code> — количество записей</td>
+                    <td><code><?php echo $siteUrl; ?>/jsonfeed.json?limit=30</code></td>
+                </tr>
+                <tr><td><code>&category=ID</code> — фильтр по категории</td>
+                    <td><code><?php echo $siteUrl; ?>/jsonfeed.json?category=20</code></td>
+                </tr>
+                <tr>
+                    <td><code>&type=НАЗВАНИЕ</code> — фильтр по типу контента</td>
+                    <td>
+                        <?php if (!empty($jsonfeed_config['content_types'])): 
+                            foreach ($jsonfeed_config['content_types'] as $type_name => $cats): ?>
+                                <code><?php echo $siteUrl; ?>/jsonfeed.json?type=<?php echo htmlspecialchars($type_name); ?></code><br>
+                            <?php endforeach; 
+                        else: ?>
+                            — (нет настроенных типов)
+                        <?php endif; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td><code>&order=date_asc|date_desc</code> — сортировка</td>
+                    <td>
+                        <code><?php echo $siteUrl; ?>/jsonfeed.json?order=date_asc</code>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <h4>🌐 Примеры для AI-агентов</h4>
+        <pre>
 # Для ChatGPT, Claude, Perplexity AI можно использовать прямые ссылки:
-https://pwht.ru/jsonfeed.json
+<?php echo $siteUrl; ?>/jsonfeed.json
 
+<?php if (!empty($jsonfeed_config['feeds'])): foreach ($jsonfeed_config['feeds'] as $feed_type => $feed_data): ?>
+# Лента "<?php echo htmlspecialchars($feed_data['title']); ?>":
+<?php echo $siteUrl; ?>/jsonfeed-<?php echo htmlspecialchars($feed_type); ?>.json
+<?php endforeach; endif; ?>
 # Подписка в RSS-ридерах (Feedly, Inoreader):
-https://pwht.ru/jsonfeed.json
-https://pwht.ru/jsonfeed-blog.json
-
+<?php echo $siteUrl; ?>/jsonfeed.json
+<?php if (!empty($jsonfeed_config['feeds'])): foreach ($jsonfeed_config['feeds'] as $feed_type => $feed_data): ?>
+<?php echo $siteUrl; ?>/jsonfeed-<?php echo htmlspecialchars($feed_type); ?>.json
+<?php endforeach; endif; ?>
 # Импорт в Telegram-боты:
-https://pwht.ru/jsonfeed.json?limit=20
-                </pre>
-                
-                <h4>📋 HTML-код для вставки в шаблон</h4>
-                <pre>
+<?php echo $siteUrl; ?>/jsonfeed.json?limit=20
+        </pre>
+        
+        <h4>📋 HTML-код для вставки в шаблон</h4>
+        <pre>
 &lt;!-- JSON Feed для AI-агентов — добавить в &lt;head&gt; --&gt;
-&lt;link rel="alternate" type="application/feed+json" title="JSON Feed - Все записи" href="/jsonfeed.json"&gt;
-&lt;link rel="alternate" type="application/feed+json" title="JSON Feed - Блог" href="/jsonfeed-blog.json"&gt;
-&lt;link rel="alternate" type="application/feed+json" title="JSON Feed - Портфолио" href="/jsonfeed-portfolio.json"&gt;
-                </pre>
-            </div>
+&lt;link rel="alternate" type="application/feed+json" title="JSON Feed - Все записи" href="<?php echo $siteUrl; ?>/jsonfeed.json"&gt;
+<?php if (!empty($jsonfeed_config['feeds'])): foreach ($jsonfeed_config['feeds'] as $feed_type => $feed_data): ?>
+&lt;link rel="alternate" type="application/feed+json" title="JSON Feed - <?php echo htmlspecialchars($feed_data['title']); ?>" href="<?php echo $siteUrl; ?>/jsonfeed-<?php echo htmlspecialchars($feed_type); ?>.json"&gt;
+<?php endforeach; endif; ?>
+        </pre>
+        
+        <!-- ========== БЛОК НАСТРОЙКИ .HTACCESS ========== -->
+        <h4>⚙️ Настройка ЧПУ (красивых URL) в .htaccess</h4>
+        <div class="alert alert-warning">
+            <i class="fa fa-exclamation-triangle"></i> 
+            <strong>Важно:</strong> Для работы красивых URL вида <code>/jsonfeed.json</code> и <code>/jsonfeed-blog.json</code> 
+            необходимо добавить правила в файл <strong>.htaccess</strong> в корне сайта.
         </div>
+        
+        <p><strong>Инструкция:</strong></p>
+        <ol>
+            <li>Откройте файл <code>.htaccess</code> в корне вашего сайта</li>
+            <li>Найдите блок с правилами для статических файлов (обычно выглядит так):
+                <pre>RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule \.(jpg|jpeg|gif|ico|png|svg|webp|avif|js|css|mp3|ogg|mp4|mkv|avi|zip|rar|woff|woff2)(\?|$) - [L,NC,R=404]</pre>
+            </li>
+            <li><strong>ВЫШЕ</strong> этого блока (перед ним) вставьте следующие правила:
+                <pre># ===== JSON Feed (AI-формат) =====
+# Полная лента
+RewriteRule ^jsonfeed\.json$ /plugins/tcse/jsonfeed/feed.json.php?limit=20 [L,QSA]
+
+<?php if (!empty($jsonfeed_config['feeds'])): foreach ($jsonfeed_config['feeds'] as $feed_type => $feed_data): ?>
+# Лента "<?php echo htmlspecialchars($feed_type); ?>"
+RewriteRule ^jsonfeed-<?php echo htmlspecialchars($feed_type); ?>\.json$ /plugins/tcse/jsonfeed/feed.json.php?type=<?php echo htmlspecialchars($feed_type); ?> [L,QSA]
+<?php endforeach; endif; ?>
+
+# Динамическая категория
+RewriteRule ^jsonfeed/category/([0-9]+)/?$ /plugins/tcse/jsonfeed/feed.json.php?category=$1&limit=30 [L,QSA]</pre>
+            </li>
+            <li>Сохраните файл <code>.htaccess</code></li>
+            <li>Проверьте работу ссылок:
+                <ul>
+                    <li><code><?php echo $siteUrl; ?>/jsonfeed.json</code></li>
+                    <?php if (!empty($jsonfeed_config['feeds'])): foreach ($jsonfeed_config['feeds'] as $feed_type => $feed_data): ?>
+                    <li><code><?php echo $siteUrl; ?>/jsonfeed-<?php echo htmlspecialchars($feed_type); ?>.json</code></li>
+                    <?php endforeach; endif; ?>
+                </ul>
+            </li>
+        </ol>
+        
+        <div class="alert alert-info">
+            <i class="fa fa-info-circle"></i> 
+            <strong>Примечание:</strong> Если в вашем <code>.htaccess</code> нет указанного выше блока, 
+            просто добавьте правила JSON Feed в самое начало файла, после строки <code>RewriteEngine On</code>.
+        </div>
+        
+    </div>
+</div>
         
         <!-- ========== КНОПКА СОХРАНЕНИЯ ========== -->
         <div class="panel panel-default">
