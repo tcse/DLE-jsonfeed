@@ -36,13 +36,13 @@ $jsonfeed_config = array (
   ),
   'feeds' => 
   array (
-    'blog' => 
+    'news' => 
     array (
       'title' => 'Новости - статьи и новости',
       'description' => 'Новости сайта',
       'limit' => 30,
     ),
-    'techlib' => 
+    'blog' => 
     array (
       'title' => 'Блог',
       'description' => 'Заметки',
