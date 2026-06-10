@@ -13,8 +13,8 @@ if (!defined('DATALIFEENGINE') && !defined('JSONFEED_INIT')) {
 }
 
 $jsonfeed_config = array (
-  'feed_title_main' => 'PWHT – после сварочная термическая обработка',
-  'feed_description_main' => 'Новости и публикации с сайта PWHT – после сварочная термическая обработка',
+  'feed_title_main' => '',
+  'feed_description_main' => '',
   'items_per_page' => 20,
   'max_items' => 100,
   'cache_time' => 3600,
@@ -25,27 +25,27 @@ $jsonfeed_config = array (
   'enable_images' => false,
   'content_types' => 
   array (
+    'news' => 
+    array (
+      0 => 1,
+    ),
     'blog' => 
     array (
       0 => 2,
-    ),
-    'techlib' => 
-    array (
-      0 => 3,
     ),
   ),
   'feeds' => 
   array (
     'blog' => 
     array (
-      'title' => 'Блог - статьи и новости',
-      'description' => 'Статьи из блога ПромИндуктора',
+      'title' => 'Новости - статьи и новости',
+      'description' => 'Новости сайта',
       'limit' => 30,
     ),
     'techlib' => 
     array (
-      'title' => 'Техническая библиотека',
-      'description' => 'Документация по продукции ПромТВЧ',
+      'title' => 'Блог',
+      'description' => 'Заметки',
       'limit' => 20,
     ),
   ),

@@ -3,7 +3,7 @@
 	<name>jsonfeed</name>
 	<description>Добавляет поддержку json feed по аналогии в RSS feed</description>
 	<icon>plugins/tcse/jsonfeed/jsonfeed-icon.png</icon>
-	<version>0.1</version>
+	<version>0.1.4</version>
 	<dleversion></dleversion>
 	<versioncompare>greater</versioncompare>
 	<upgradeurl></upgradeurl>

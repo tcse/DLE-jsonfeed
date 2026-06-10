@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Блог — анонсы статей</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f4f6fa;
+            color: #1e293b;
+            padding: 2rem 1rem;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+        }
+
+        .subhead {
+            color: #475569;
+            margin-bottom: 2rem;
+            border-left: 4px solid #3b82f6;
+            padding-left: 1rem;
+        }
+
+        /* Grid карточек */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.75rem;
+        }
+
+        /* Карточка */
+        .card {
+            background: white;
+            border-radius: 1.25rem;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -12px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Если в JSON есть картинка — покажем */
+        .card-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            background: #e2e8f0;
+        }
+
+        .card-content {
+            padding: 1.5rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-date {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #3b82f6;
+            font-weight: 500;
+            margin-bottom: 0.6rem;
+        }
+
+        .card-title {
+            font-size: 1.35rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            line-height: 1.3;
+        }
+
+        .card-summary {
+            color: #334155;
+            margin-bottom: 1.5rem;
+            flex: 1;
+            /* ограничиваем анонс по высоте, но можно убрать */
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .btn-read {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #1e293b;
+            color: white;
+            padding: 0.65rem 1.25rem;
+            border-radius: 2rem;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+            align-self: flex-start;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-read:hover {
+            background: #0f172a;
+        }
+
+        /* Состояния загрузки / ошибки */
+        .loading, .error, .no-posts {
+            text-align: center;
+            padding: 3rem;
+            background: white;
+            border-radius: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .error {
+            color: #b91c1c;
+            background: #fee2e2;
+            border-left: 6px solid #ef4444;
+        }
+
+        footer {
+            margin-top: 3rem;
+            text-align: center;
+            color: #64748b;
+            font-size: 0.85rem;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 2rem;
+        }
+
+        @media (max-width: 640px) {
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+            body {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>📄 Анонсы статей</h1>
+    <div class="subhead">Актуальные материалы из ленты — переходите к оригиналу</div>
+
+    <div id="app">
+        <div class="loading">
+            ⏳ Загрузка статей...
+        </div>
+    </div>
+    <footer>
+        <p>Источник: JSON Feed • Карточки с кнопкой «Читать целиком» ведут на оригинал статьи</p>
+        <p>Плагин <a href="https://github.com/tcse/DLE-jsonfeed" title="Открыть репозиторий">DLE-jsonfeed</a> разработано в <a href="https://tcse-cms.com" title="перейти на сайт разработчика">TCSE-cms.com</a></p>
+    </footer>
+</div>
+
+<script>
+    // Адрес вашего JSON-фида (можно изменить при необходимости)
+    const FEED_URL = '/plugins/tcse/jsonfeed/feed.json.php';
+
+    // Функция для форматирования даты (опционально)
+    function formatDate(dateString) {
+        if (!dateString) return '';
+        try {
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) return dateString;
+            return date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+        } catch (e) {
+            return dateString;
+        }
+    }
+
+    // Извлечение текстового анонса из содержимого (если нет поля summary/content_text)
+    // На случай, если в фиде используется HTML-поле content_html — убираем теги для превью.
+    function getExcerpt(item, maxLength = 160) {
+        // Поле для краткого описания по приоритету: summary -> content_text -> content_html -> описание из title
+        if (item.summary && typeof item.summary === 'string') {
+            return stripHtml(item.summary);
+        }
+        if (item.content_text && typeof item.content_text === 'string') {
+            return stripHtml(item.content_text).slice(0, maxLength);
+        }
+        if (item.content_html && typeof item.content_html === 'string') {
+            const plain = stripHtml(item.content_html);
+            return plain.slice(0, maxLength);
+        }
+        // Если совсем ничего нет, то используем заголовок как анонс (обрезанный)
+        return (item.title || 'Читайте в материале').slice(0, maxLength);
+    }
+
+    function stripHtml(html) {
+        if (!html) return '';
+        const tmp = document.createElement('div');
+        tmp.innerHTML = html;
+        return tmp.textContent || tmp.innerText || '';
+    }
+
+    // Основная функция загрузки и отображения карточек
+    async function loadAndRender() {
+        const appContainer = document.getElementById('app');
+
+        try {
+            const response = await fetch(FEED_URL);
+
+            if (!response.ok) {
+                throw new Error(`Ошибка HTTP: ${response.status} ${response.statusText}`);
+            }
+
+            const data = await response.json();
+
+            // JSON Feed спецификация: посты обычно находятся в массиве "items"
+            // Если ваш JSON имеет другую структуру (например, "articles", "posts") — укажите ниже.
+            let posts = [];
+            if (data && Array.isArray(data.items)) {
+                posts = data.items;
+            } else if (data && Array.isArray(data.posts)) {
+                posts = data.posts;
+            } else if (data && Array.isArray(data.articles)) {
+                posts = data.articles;
+            } else if (Array.isArray(data)) {
+                posts = data;
+            } else {
+                console.warn('Неизвестная структура JSON, ожидается массив в поле items/posts/articles', data);
+                posts = [];
+            }
+
+            if (!posts.length) {
+                appContainer.innerHTML = `<div class="no-posts">📭 Статей не найдено. Проверьте структуру JSON-фида.</div>`;
+                return;
+            }
+
+            // Формируем HTML карточек
+            const cardsHTML = posts.map(post => {
+                // 1. Заголовок
+                const title = post.title || 'Без заголовка';
+
+                // 2. Ссылка на оригинал (читаем "url" или "external_url" или "link")
+                const originalUrl = post.url || post.external_url || post.link || '#';
+                const isMissingLink = (originalUrl === '#');
+
+                // 3. Дата (date_published или date_modified или просто date)
+                const rawDate = post.date_published || post.pubDate || post.date || '';
+                const dateDisplay = rawDate ? formatDate(rawDate) : '';
+
+                // 4. Изображение (если есть: image, banner_image, cover)
+                let imageUrl = '';
+                if (post.image) imageUrl = post.image;
+                else if (post.banner_image) imageUrl = post.banner_image;
+                else if (post.cover) imageUrl = post.cover;
+                else if (post.thumbnail) imageUrl = post.thumbnail;
+                // Доп. некоторые фиды кладут картинку внутри attachments
+                else if (post.attachments && post.attachments.length && post.attachments[0].url) {
+                    imageUrl = post.attachments[0].url;
+                }
+
+                // 5. Анонс (summary / content)
+                const summary = getExcerpt(post, 150);
+
+                // Кнопка «Читать целиком» должна вести на оригинал статьи. Если ссылки нет — даём заглушку.
+                const btnDisabledAttr = isMissingLink ? 'disabled style="opacity:0.6; cursor:not-allowed;"' : '';
+                const btnHref = isMissingLink ? 'javascript:void(0);' : originalUrl;
+
+                return `
+                    <div class="card">
+                        ${imageUrl ? `<img class="card-image" src="${escapeHtml(imageUrl)}" loading="lazy" alt="${escapeHtml(title)}" onerror="this.style.display='none'">` : ''}
+                        <div class="card-content">
+                            ${dateDisplay ? `<div class="card-date">${escapeHtml(dateDisplay)}</div>` : ''}
+                            <div class="card-title">${escapeHtml(title)}</div>
+                            <div class="card-summary">${escapeHtml(summary)}</div>
+                            <a href="${btnHref}" target="_blank" rel="noopener noreferrer" class="btn-read" ${btnDisabledAttr}>
+                                📖 Читать целиком →
+                            </a>
+                            ${isMissingLink ? '<div style="font-size:12px; color:#94a3b8; margin-top:8px;">⚠️ Ссылка отсутствует в фиде</div>' : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            appContainer.innerHTML = `<div class="cards-grid">${cardsHTML}</div>`;
+
+        } catch (error) {
+            console.error('Ошибка загрузки фида:', error);
+            appContainer.innerHTML = `
+                <div class="error">
+                    ❌ Не удалось загрузить статьи.<br>
+                    Проверьте доступность фида <strong>${FEED_URL}</strong> и настройки CORS.<br>
+                    Ошибка: ${escapeHtml(error.message)}
+                    <br><br>
+                    <small>💡 Если фид лежит на другом домене, убедитесь, что он поддерживает CORS.
+                    Для локального теста можно использовать прокси (например, cors-anywhere).</small>
+                </div>
+            `;
+        }
+    }
+
+    // Элементарная защита от XSS
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    // Запускаем загрузку при загрузке страницы
+    loadAndRender();
+</script>
+</body>
+</html>

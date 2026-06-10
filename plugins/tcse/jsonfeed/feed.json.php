@@ -158,7 +158,7 @@ $feed = [
     'user_comment' => 'JSON Feed формат для AI-агентов и RSS-ридеров. Спецификация: https://jsonfeed.org/version/1.1',
     'favicon' => $baseUrl . '/favicon.ico',
     'icon' => $baseUrl . '/uploads/jsonfeed-logo.png',
-    'autors' => [
+    'authors' => [
         [
             'name' => $config['home_title'] ?? 'Администрация',
             'url' => $baseUrl
@@ -172,16 +172,16 @@ $feed = [
 // Формирование элементов
 foreach ($posts as $post) {
     // Получаем автора из БД
-    $autorName = '';
-    if (!empty($post['autor'])) {
+    $authorName = '';
+    if (!empty($post['author'])) {
         // Пытаемся получить имя автора из таблицы users
-        $autorInfo = $db->super_query("SELECT name FROM " . PREFIX . "_users WHERE user_id = '" . $db->safesql($post['autor']) . "'");
-        $autorName = $autorInfo['name'] ?? $post['autor'];
+        $authorInfo = $db->super_query("SELECT name FROM " . PREFIX . "_users WHERE user_id = '" . $db->safesql($post['author']) . "'");
+        $authorName = $authorInfo['name'] ?? $post['author'];
     }
     
     // Если автор не найден, используем название сайта
-    if (empty($autorName)) {
-        $autorName = $config['home_title'] ?? 'Администрация';
+    if (empty($authorName)) {
+        $authorName = $config['home_title'] ?? 'Администрация';
     }
     
     // Название категории
@@ -252,9 +252,9 @@ foreach ($posts as $post) {
         'summary' => $summary,
         'date_published' => date('c', strtotime($post['date'])),
         'date_modified' => date('c', strtotime($post['date'])),
-        'autors' => [
+        'authors' => [
             [
-                'name' => $autorName,
+                'name' => $authorName,
                 'url' => $baseUrl
             ]
         ],
