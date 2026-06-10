@@ -177,14 +177,14 @@ if (isset($error_message)) {
                     <span class="help-block">0 - кэширование отключено. Рекомендуется 3600 (1 час)</span>
                 </div>
             </div>
-            <div class="col-md-6">
+            <!-- <div class="col-md-6">
                 <div class="form-group">
                     <label>🖼 Качество изображений (%)</label>
                     <input type="number" class="form-control" name="image_quality" 
                            value="<?php echo $jsonfeed_config['image_quality']; ?>" min="30" max="100">
                     <span class="help-block">Качество JPEG-изображений в ленте (30-100)</span>
                 </div>
-            </div>
+            </div> -->
         </div>
         
         <div class="row">
