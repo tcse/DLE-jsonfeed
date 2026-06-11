@@ -335,8 +335,8 @@ foreach ($posts as $post) {
         'url' => $postUrl,
         'title' => $post['title'],
         'content_html' => $contentHtml,
-        'content_text' => $contentText,
-        'summary' => $summary,
+        'content_text' => strip_tags($post['full_story'] ?? $post['short_story']), // ПОЛНЫЙ текст
+        'summary' => $summary, // только КРАТКОЕ описание (300 символов)
         'date_published' => date('c', strtotime($post['date'])),
         'date_modified' => date('c', strtotime($post['date'])),
         'authors' => [
