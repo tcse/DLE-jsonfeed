@@ -3,7 +3,7 @@
 =====================================================
  DLE Json Feed - by TCSE 
 -----------------------------------------------------
- Версия: 0.1.4 от 2026-06-10
+ Версия: 0.1.5 от 2026-06-11
 -----------------------------------------------------
  Страница продукта: https://tcse-cms.com
 -----------------------------------------------------
@@ -147,7 +147,10 @@ $sql = "SELECT
             c.alt_name as category_alt_name
         FROM " . PREFIX . "_post p
         LEFT JOIN " . PREFIX . "_category c ON c.id = p.category
-        WHERE " . implode(" AND ", $whereConditions) . "
+        WHERE p.approve = '1' 
+            AND p.date <= NOW()           -- <-- ДОБАВЛЕННОЕ УСЛОВИЕ
+            " . ($categoryFilter > 0 ? "AND p.category = '" . $db->safesql($categoryFilter) . "'" : "") . "
+            " . ($typeFilter !== 'main' && isset($jsonfeed_config['content_types'][$typeFilter]) ? "AND (" . implode(" OR ", $catConditions) . ")" : "") . "
         ORDER BY " . $orderBy . "
         LIMIT " . intval($limit);
 
